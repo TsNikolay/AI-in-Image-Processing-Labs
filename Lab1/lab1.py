@@ -2,9 +2,10 @@ import cv2
 import imutils
 import numpy 
 
-# Створення зображень
+# Зчитування та створення зображень
 img = cv2.imread("Lab1\data\image.jpg")
 imgGray = cv2.imread("Lab1\data\image.jpg",0)
+imgCropped = img[145:620, 60:400]
 imgResized = imutils.resize(img, width=300)
 imgRotated = imutils.rotate(img, 45)
 imgBlurred = cv2.GaussianBlur(img, (11,11), 0) # 11,11 - ступінь розмиття, 0 - стандартне відхилення (атоматично)
@@ -24,7 +25,7 @@ cv2.circle(imgForCircle, (255,255), 90,(212,173,49), 3) # 255,265 - коорди
 font = cv2.FONT_ITALIC
 cv2.putText(imgForText, "Person is found", (125,100) , font, 1 ,(16,74,9),4, cv2.LINE_AA) # 1 - масштабування, 
 
-images = [img, imgGray, imgResized, imgRotated, imgBlurred, imgUnited,imgForRectangle,imgForLine,imgForPolylines,imgForCircle,imgForText]
+images = [img, imgGray, imgCropped,imgResized, imgRotated, imgBlurred, imgUnited,imgForRectangle,imgForLine,imgForPolylines,imgForCircle,imgForText]
 
 #Послідовне відображення зображень
 for image in images:
@@ -54,3 +55,6 @@ cv2.destroyAllWindows()
 # center = (width // 2, height//2)
 # rotationMatrix = cv2.getRotationMatrix2D(center, 45, 1) # 45 - градуси повороту, 1 - зберегти розміри
 # imgRotated = cv2.warpAffine(img, rotationMatrix, (width, height))
+
+# Зберігання файлу
+# cv2.imwrite("Lab1\data\newImage.jpg",img)
