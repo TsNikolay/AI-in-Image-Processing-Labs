@@ -1,53 +1,6 @@
 import cv2
 import numpy as np
 
-# Функція для малювання ліній на кадрі
-def draw_lines(frame, lines, color=[0, 165, 255], thickness=7):
-    if lines is None:
-        return
-
-    # Ініціалізація списків для координат лівих та правих ліній
-    left_line_x = []
-    left_line_y = []
-    right_line_x = []
-    right_line_y = []
-
-    # Перебір усіх ліній для визначення їх нахилу та класифікації
-    for line in lines:
-        for x1, y1, x2, y2 in line:
-            if x2 - x1 == 0:  # Перевірка на вертикальність лінії
-                continue 
-            slope = (y2 - y1) / (x2 - x1)  # Обчислення нахилу
-
-            # Відкидання ліній, які мають надто малий нахил
-            if abs(slope) < 0.5:
-                continue
-
-            # Класифікація ліній на ліві та праві
-            if slope <= 0: 
-                left_line_x.extend([x1, x2])
-                left_line_y.extend([y1, y2])
-            else:  
-                right_line_x.extend([x1, x2])
-                right_line_y.extend([y1, y2])
-
-    # Визначення мінімальної та максимальної координати y для малювання ліній
-    min_y = frame.shape[0] * (2.8 / 5)  
-    max_y = frame.shape[0] 
-
-    # Малювання лівої лінії, якщо вона була знайдена
-    if len(left_line_x) > 0 and len(left_line_y) > 0:
-        poly_left = np.poly1d(np.polyfit(left_line_y, left_line_x, deg=1))
-        left_x_start = int(poly_left(max_y))
-        left_x_end = int(poly_left(min_y))
-        cv2.line(frame, (left_x_start, int(max_y)), (left_x_end, int(min_y)), color, thickness)
-
-    # Малювання правої лінії, якщо вона була знайдена
-    if len(right_line_x) > 0 and len(right_line_y) > 0:
-        poly_right = np.poly1d(np.polyfit(right_line_y, right_line_x, deg=1))
-        right_x_start = int(poly_right(max_y))
-        right_x_end = int(poly_right(min_y))
-        cv2.line(frame, (right_x_start, int(max_y)), (right_x_end, int(min_y)), color, thickness)
 
 # Функція для обробки кадру
 def process_image(frame):
@@ -97,6 +50,56 @@ def process_image(frame):
     draw_lines(frame, lines)
      
     return frame
+
+# Функція для малювання ліній на кадрі
+def draw_lines(frame, lines, color=[0, 165, 255], thickness=7):
+    if lines is None:
+        return
+
+    # Ініціалізація списків для координат лівих та правих ліній
+    left_line_x = []
+    left_line_y = []
+    right_line_x = []
+    right_line_y = []
+
+    # Перебір усіх ліній для визначення їх нахилу та класифікації
+    for line in lines:
+        for x1, y1, x2, y2 in line:
+            if x2 - x1 == 0:  # Перевірка на вертикальність лінії
+                continue 
+            slope = (y2 - y1) / (x2 - x1)  # Обчислення нахилу
+
+            # Відкидання ліній, які мають надто малий нахил
+            if abs(slope) < 0.5:
+                continue
+
+            # Класифікація ліній на ліві та праві
+            if slope <= 0: 
+                left_line_x.extend([x1, x2])
+                left_line_y.extend([y1, y2])
+            else:  
+                right_line_x.extend([x1, x2])
+                right_line_y.extend([y1, y2])
+
+    # Визначення мінімальної та максимальної координати y для малювання ліній
+    min_y = frame.shape[0] * (2.8 / 5)  
+    max_y = frame.shape[0] 
+
+    # Малювання лівої лінії, якщо вона була знайдена
+    if len(left_line_x) > 0 and len(left_line_y) > 0:
+        poly_left = np.poly1d(np.polyfit(left_line_y, left_line_x, deg=1))
+        left_x_start = int(poly_left(max_y))
+        left_x_end = int(poly_left(min_y))
+        cv2.line(frame, (left_x_start, int(max_y)), (left_x_end, int(min_y)), color, thickness)
+
+    # Малювання правої лінії, якщо вона була знайдена
+    if len(right_line_x) > 0 and len(right_line_y) > 0:
+        poly_right = np.poly1d(np.polyfit(right_line_y, right_line_x, deg=1))
+        right_x_start = int(poly_right(max_y))
+        right_x_end = int(poly_right(min_y))
+        cv2.line(frame, (right_x_start, int(max_y)), (right_x_end, int(min_y)), color, thickness)
+
+
 
 # Отримання початкового зображення та його обробка
 img = cv2.imread("Lab3/data/road.jpg")
